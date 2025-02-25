@@ -1,0 +1,3 @@
+/Users/basitarshad/Documents/newfolder/Movies/android/app/.cxx/Debug/6f3l6w4m/arm64-v8a/CMakeFiles/appmodules.dir
+/Users/basitarshad/Documents/newfolder/Movies/android/app/.cxx/Debug/6f3l6w4m/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/basitarshad/Documents/newfolder/Movies/android/app/.cxx/Debug/6f3l6w4m/arm64-v8a/CMakeFiles/rebuild_cache.dir
