@@ -11,16 +11,22 @@ interface Movie {
 
 interface MoviesState {
   upcoming: Movie[];
+  allMovies: Movie[];
   searchResults: Movie[];
   loading: boolean;
   error: string | null;
+  currentPage: number;
+  totalPages: number;
 }
 
 const initialState: MoviesState = {
   upcoming: [],
+  allMovies: [],
   searchResults: [],
   loading: false,
   error: null,
+  currentPage: 1,
+  totalPages: 1,
 };
 
 export const fetchUpcomingMovies = createAsyncThunk(
@@ -45,6 +51,14 @@ export const searchMovies = createAsyncThunk(
   }
 );
 
+export const fetchAllMovies = createAsyncThunk('movies/fetchAll', async (page = 1) => {
+  const response = await axios.get(
+    'https://api.themoviedb.org/3/movie/popular',
+    { params: { api_key: '024d69b581633d457ac58359146c43f6', page } }
+  );
+  return { results: response.data.results, totalPages: response.data.total_pages };
+});
+
 const moviesSlice = createSlice({
   name: 'movies',
   initialState,
@@ -60,7 +74,7 @@ const moviesSlice = createSlice({
       })
       .addCase(fetchUpcomingMovies.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch movies';
+        state.error = action.error.message || 'Failed to fetch upcoming movies';
       })
       .addCase(searchMovies.pending, (state) => {
         state.loading = true;
@@ -72,6 +86,19 @@ const moviesSlice = createSlice({
       .addCase(searchMovies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to search movies';
+      })
+      .addCase(fetchAllMovies.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchAllMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allMovies = [...state.allMovies, ...action.payload.results];
+        state.currentPage = state.currentPage + 1;
+        state.totalPages = action.payload.totalPages;
+      })
+      .addCase(fetchAllMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch all movies';
       });
   },
 });
