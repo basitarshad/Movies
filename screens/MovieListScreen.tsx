@@ -85,14 +85,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingHorizontal: 5,
     paddingVertical: 3,
     borderRadius: 5,
   },
   title: {
-    fontSize: 14,
-    color: '#fff',
+    fontSize: 20,
+    color: '#fff', 
+    fontWeight:'700'
   },
   searchIcon:{ resizeMode: 'contain', width: 25, height: 25 },
   customHeader:   { 
