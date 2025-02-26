@@ -61,7 +61,6 @@ const MovieListScreen: React.FC<Props> = ({ navigation }) => {
               </View>
           </TouchableOpacity>
         )}
-        numColumns={2}
         keyExtractor={(item) => item.id.toString()}
       />
     </View>

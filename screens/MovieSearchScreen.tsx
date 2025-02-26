@@ -84,10 +84,11 @@ const MovieSearchScreen: React.FC<Props> = ({ navigation }) => {
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={moviesToDisplay}
-        renderItem={({ item }) => (
+        renderItem={({ item }) => {
+          return(
           <TouchableOpacity
             onPress={() => navigation.navigate('MovieDetail', { movieId: item.id })}
-            style={styles.resultItem}
+            style={styles.movieTile}
           >
             <Image
               source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }}
@@ -96,7 +97,8 @@ const MovieSearchScreen: React.FC<Props> = ({ navigation }) => {
             />
             <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
           </TouchableOpacity>
-        )}
+        )}}
+        numColumns={2}
         keyExtractor={(item) => item.id.toString()}
         listEmptyComponent={
           !loading && <Text style={styles.emptyText}>No movies found</Text>
@@ -124,21 +126,22 @@ const styles = StyleSheet.create({
     right: 10,
     padding: 10,
   },
-  resultItem: {
-    flexDirection: 'row',
-    marginVertical: 5,
-    padding: 10,
-    backgroundColor: '#fff',
+  movieTile: {
+    flex: 1,
+    margin: 5,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: '#ddd',
   },
-  poster: { width: 50, height: 75, resizeMode: 'cover', borderRadius: 5 },
-  title: { fontSize: 16, marginLeft: 10, flex: 1, color: '#333' },
+  poster: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+  },
+  title: {
+    fontSize: 14,
+    color: '#fff',
+  },
   errorText: { color: 'red', textAlign: 'center', marginVertical: 10 },
   emptyText: { textAlign: 'center', marginVertical: 20, color: '#666' },
   loadingMore: { marginVertical: 10 },
