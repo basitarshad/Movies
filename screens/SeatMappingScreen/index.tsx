@@ -77,34 +77,6 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
     </View>
   );
 
-  const renderSeatGrid = () => {
-    const seatsPerRow = 5;
-    const rows = [];
-
-    for (let i = 0; i < seats.length; i += seatsPerRow) {
-      const rowSeats = seats.slice(i, i + seatsPerRow);
-      rows.push(
-        <View key={i} style={styles.seatRow}>
-          {rowSeats.map((seat) => (
-            <TouchableOpacity
-              key={seat.id}
-              style={[
-                styles.seat,
-                seat.type === "VIP" && styles.vipSeat,
-                !seat.available && styles.unavailableSeat,
-                selectedSeats.includes(seat.id) && styles.selectedSeat,
-              ]}
-              onPress={() => seat.available && toggleSeat(seat.id)}
-              disabled={!seat.available}
-            />
-          ))}
-        </View>
-      );
-    }
-
-    return rows;
-  };
-
   const ShowtimePanel = ({ showtime, hall, price, bonus }) => (
     <View style={styles.panel}>
       <View style={styles.movieDetailsContainer}>
