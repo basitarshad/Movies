@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { searchMovies, fetchAllMovies } from "../redux/slices/moviesSlice";
 import { RootState } from "../redux/store";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import genreData from "../utils/genreIds.json"; // Import genre data
+import genreData from "../utils/genreIds.json";
 import { TabBar } from "./MovieListScreen";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "MovieSearch">;
@@ -29,7 +30,6 @@ const MovieSearchScreen: React.FC<Props> = ({ navigation }) => {
   const { allMovies, searchResults, loading, error, currentPage, totalPages } =
     useSelector((state: RootState) => state.movies);
 
-  // Create a genre map for quick lookup
   const genreMap = Object.fromEntries(
     genreData.genres.map((genre) => [genre.id, genre.name])
   );
@@ -55,12 +55,10 @@ const MovieSearchScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [dispatch, loading, currentPage, totalPages]);
 
-  // Determine whether to show movies (search mode) or genres (default)
   const moviesToDisplay = query.length > 2 ? searchResults : allMovies;
 
   return (
     <View style={styles.container}>
-      {/* Search Bar */}
       <View style={styles.customHeader}>
         <View style={styles.searchContainer}>
           <Image
@@ -186,7 +184,7 @@ const styles = StyleSheet.create({
   loadingMore: { marginVertical: 10 },
   iconStyles: { resizeMode: "contain", width: 25, height: 25 },
   customHeader: {
-    paddingTop: 80,
+    paddingTop: Platform.OS == "ios" ? 80 : 30,
     paddingBottom: 10,
     backgroundColor: "#fff",
     paddingHorizontal: 15,

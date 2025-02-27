@@ -36,23 +36,20 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Get today's date
   const today = new Date();
 
-  // Generate an array of 14 dates starting from today
   const dates = Array.from({ length: 14 }, (_, i) => {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
     return date;
   });
 
-  // Dummy seat data: 20 seats with some VIP and varying availability
   const seats: Seat[] = Array(20)
     .fill(null)
     .map((_, i) => ({
       id: i + 1,
       type: i < 5 ? "VIP" : "Regular",
-      available: i % 3 !== 0, // Some seats are unavailable
+      available: i % 3 !== 0,
     }));
 
   const toggleSeat = (seatId: number) => {
@@ -80,9 +77,8 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
     </View>
   );
 
-  // Render the seat grid in rows
   const renderSeatGrid = () => {
-    const seatsPerRow = 5; // 4 rows of 5 seats each
+    const seatsPerRow = 5;
     const rows = [];
 
     for (let i = 0; i < seats.length; i += seatsPerRow) {
@@ -109,7 +105,6 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
     return rows;
   };
 
-  // ShowtimePanel Component: Displays a single showtime panel with label, seat map, and pricing
   const ShowtimePanel = ({ showtime, hall, price, bonus }) => (
     <View style={styles.panel}>
       <View style={styles.movieDetailsContainer}>
@@ -119,7 +114,7 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
       <View
         style={{
           borderWidth: 2,
-          borderColor: "#A5D8FF", // Light blue border
+          borderColor: "#A5D8FF",
           borderRadius: 10,
           paddingHorizontal: 40,
         }}
@@ -138,7 +133,6 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
     </View>
   );
 
-  // ShowtimeSelector Component: Displays two showtime panels side by side
   const ShowtimeSelector = () => (
     <View style={styles.showtimeContainer}>
       <ScrollView
@@ -172,7 +166,7 @@ const SeatMappingScreen: React.FC<Props> = ({ route, navigation }) => {
         >
           {dates.map((date) => (
             <TouchableOpacity
-              key={date.toISOString()} // Unique key based on the date
+              key={date.toISOString()}
               style={[
                 styles.button,
                 date.toDateString() === selectedDate.toDateString()

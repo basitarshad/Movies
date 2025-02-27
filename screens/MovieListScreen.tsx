@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUpcomingMovies } from "../redux/slices/moviesSlice";
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: { resizeMode: "contain", width: 25, height: 25 },
   customHeader: {
-    paddingTop: 80,
+    paddingTop: Platform.OS == "ios" ? 80 : 30,
     paddingBottom: 10,
     backgroundColor: "#fff",
     flexDirection: "row",

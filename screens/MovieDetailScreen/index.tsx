@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import axios from "axios";
-import { WebView } from "react-native-webview"; // Add this import
+import { WebView } from "react-native-webview";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
@@ -30,7 +30,7 @@ interface Movie {
   title: string;
   poster_path: string;
   overview: string;
-  release_date: string; // Added for type safety
+  release_date: string;
   genres: { id: number; name: string }[];
 }
 
@@ -58,7 +58,7 @@ export const formatReleaseDate = (releaseDate: string) => {
 const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { movieId } = route.params;
   const [movie, setMovie] = useState<Movie | null>(null);
-  const [trailerKey, setTrailerKey] = useState<string | null>(null); // Store YouTube key instead of full URL
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
   const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         const trailerData = videoResponse.data.results.find(
           (video: any) => video.type === "Trailer" && video.site === "YouTube"
         );
-        if (trailerData) setTrailerKey(trailerData.key); // Store just the key
+        if (trailerData) setTrailerKey(trailerData.key);
       } catch (error) {
         console.error("Error fetching movie details:", error);
       }

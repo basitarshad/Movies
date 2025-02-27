@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export default StyleSheet.create({
     container: {
@@ -41,7 +41,7 @@ export default StyleSheet.create({
     },
     leftIcon: { resizeMode: "contain", width: 25, height: 25 },
     customHeader: {
-      paddingTop: 80,
+      paddingTop: Platform.OS == "ios" ? 80 : 30,
       paddingBottom: 10,
       backgroundColor: "#fff",
       flexDirection: "row",

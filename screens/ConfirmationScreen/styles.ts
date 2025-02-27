@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export default StyleSheet.create({
     container: { flex: 1, backgroundColor: "#fff" },
@@ -6,7 +6,7 @@ export default StyleSheet.create({
     subtitle: { fontSize: 16, marginVertical: 10 },
     price: { fontSize: 18, fontWeight: "bold", marginVertical: 20 },
     customHeader: {
-      paddingTop: 80,
+      paddingTop: Platform.OS == "ios" ? 80 : 30,
       paddingBottom: 10,
       backgroundColor: "#fff",
       flexDirection: "row",
