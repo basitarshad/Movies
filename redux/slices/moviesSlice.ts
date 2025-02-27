@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import Config from 'react-native-config';
 
 interface Movie {
   id: number;
@@ -34,7 +35,7 @@ export const fetchUpcomingMovies = createAsyncThunk(
   async () => {
     const response = await axios.get(
       'https://api.themoviedb.org/3/movie/upcoming',
-      { params: { api_key: '024d69b581633d457ac58359146c43f6' } }
+      { params: { api_key: Config.TMDB_API_KEY } }
     );
     return response.data.results;
   }
@@ -45,7 +46,7 @@ export const searchMovies = createAsyncThunk(
   async (query: string) => {
     const response = await axios.get(
       'https://api.themoviedb.org/3/search/movie',
-      { params: { api_key: '024d69b581633d457ac58359146c43f6', query } }
+      { params: { api_key: Config.TMDB_API_KEY, query } }
     );
     return response.data.results;
   }
@@ -54,7 +55,7 @@ export const searchMovies = createAsyncThunk(
 export const fetchAllMovies = createAsyncThunk('movies/fetchAll', async (page = 1) => {
   const response = await axios.get(
     'https://api.themoviedb.org/3/movie/popular',
-    { params: { api_key: '024d69b581633d457ac58359146c43f6', page } }
+    { params: { api_key: Config.TMDB_API_KEY, page } }
   );
   return { results: response.data.results, totalPages: response.data.total_pages };
 });

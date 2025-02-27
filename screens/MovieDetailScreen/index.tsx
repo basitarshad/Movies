@@ -14,6 +14,7 @@ import { WebView } from "react-native-webview";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+import Config from "react-native-config";
 import Left from "../../assets/leftChevron.png";
 import styles from "./styles";
 
@@ -66,13 +67,13 @@ const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
       try {
         const movieResponse = await axios.get(
           `https://api.themoviedb.org/3/movie/${movieId}`,
-          { params: { api_key: "024d69b581633d457ac58359146c43f6" } }
+          { params: { api_key: Config.TMDB_API_KEY } }
         );
         setMovie(movieResponse.data);
 
         const videoResponse = await axios.get(
           `https://api.themoviedb.org/3/movie/${movieId}/videos`,
-          { params: { api_key: "024d69b581633d457ac58359146c43f6" } }
+          { params: { api_key: Config.TMDB_API_KEY } }
         );
         const trailerData = videoResponse.data.results.find(
           (video: any) => video.type === "Trailer" && video.site === "YouTube"
