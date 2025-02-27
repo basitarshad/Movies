@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import axios from "axios";
-import Video from "react-native-video";
+import { WebView } from "react-native-webview"; // Add this import
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -29,43 +29,47 @@ interface Movie {
   title: string;
   poster_path: string;
   overview: string;
+  release_date: string; // Added for type safety
   genres: { id: number; name: string }[];
 }
 
 const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { movieId } = route.params;
   const [movie, setMovie] = useState<Movie | null>(null);
-  const [trailer, setTrailer] = useState<string | null>(null);
+  const [trailerKey, setTrailerKey] = useState<string | null>(null); // Store YouTube key instead of full URL
   const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
-      const movieResponse = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movieId}`,
-        { params: { api_key: "024d69b581633d457ac58359146c43f6" } }
-      );
-      setMovie(movieResponse.data);
+      try {
+        const movieResponse = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movieId}`,
+          { params: { api_key: "024d69b581633d457ac58359146c43f6" } }
+        );
+        setMovie(movieResponse.data);
 
-      const videoResponse = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movieId}/videos`,
-        { params: { api_key: "024d69b581633d457ac58359146c43f6" } }
-      );
-      const trailerData = videoResponse.data.results.find(
-        (video: any) => video.type === "Trailer" && video.site === "YouTube"
-      );
-      if (trailerData)
-        setTrailer(`https://www.youtube.com/watch?v=${trailerData.key}`);
+        const videoResponse = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+          { params: { api_key: "024d69b581633d457ac58359146c43f6" } }
+        );
+        const trailerData = videoResponse.data.results.find(
+          (video: any) => video.type === "Trailer" && video.site === "YouTube"
+        );
+        if (trailerData) setTrailerKey(trailerData.key); // Store just the key
+      } catch (error) {
+        console.error("Error fetching movie details:", error);
+      }
     };
     fetchMovieDetails();
   }, [movieId]);
 
   const genreColors = ["#15D2BC", "#E26CA5", "#CD9D0F", "#564CA3", "#FF5733"];
 
-  const getGenreStyle = (index: number) => {
-    return { backgroundColor: genreColors[index % genreColors.length] };
-  };
+  const getGenreStyle = (index: number) => ({
+    backgroundColor: genreColors[index % genreColors.length],
+  });
 
-  const formatReleaseDate = (releaseDate) => {
+  const formatReleaseDate = (releaseDate: string) => {
     const date = new Date(releaseDate);
     const monthNames = [
       "January",
@@ -81,25 +85,22 @@ const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
       "November",
       "December",
     ];
-    const month = monthNames[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return `In Theaters ${month} ${day}, ${year}`;
+    return `In Theaters ${
+      monthNames[date.getMonth()]
+    } ${date.getDate()}, ${date.getFullYear()}`;
   };
 
-  const CustomHeader = () => {
-    return (
-      <View style={styles.customHeader}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ marginLeft: 10 }}
-        >
-          <Image source={Left} style={styles.searchIcon} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Watch</Text>
-      </View>
-    );
-  };
+  const CustomHeader = () => (
+    <View style={styles.customHeader}>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ marginLeft: 10 }}
+      >
+        <Image source={Left} style={styles.searchIcon} />
+      </TouchableOpacity>
+      <Text style={styles.headerTitle}>Watch</Text>
+    </View>
+  );
 
   if (!movie) return <Text>Loading...</Text>;
 
@@ -126,7 +127,7 @@ const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Text style={styles.btnText}>Get Tickets</Text>
           </TouchableOpacity>
-          {trailer && (
+          {trailerKey && (
             <TouchableOpacity
               style={styles.watchTrailerContainer}
               onPress={() => setShowVideo(true)}
@@ -139,16 +140,14 @@ const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
       <View style={{ paddingHorizontal: 40 }}>
         <Text style={styles.headingText}>Genres</Text>
         <View style={styles.genresContainer}>
-          <View style={styles.genresContainer}>
-            {uniqueGenres.map((genre, index) => (
-              <View
-                key={genre.id}
-                style={[styles.genreTag, getGenreStyle(index)]}
-              >
-                <Text style={styles.genreText}>{genre.name}</Text>
-              </View>
-            ))}
-          </View>
+          {uniqueGenres.map((genre, index) => (
+            <View
+              key={genre.id}
+              style={[styles.genreTag, getGenreStyle(index)]}
+            >
+              <Text style={styles.genreText}>{genre.name}</Text>
+            </View>
+          ))}
         </View>
         <View style={styles.separator} />
         <Text style={styles.headingText}>Overview</Text>
@@ -156,13 +155,17 @@ const MovieDetailScreen: React.FC<Props> = ({ route, navigation }) => {
       </View>
       <Modal visible={showVideo} animationType="fade">
         <View style={styles.videoContainer}>
-          <Video
-            source={{ uri: trailer! }}
-            style={styles.video}
-            controls={false}
-            resizeMode="contain"
-            onEnd={() => setShowVideo(false)}
-          />
+          {trailerKey && (
+            <WebView
+              source={{
+                uri: `https://www.youtube.com/embed/${trailerKey}?autoplay=1`,
+              }}
+              style={styles.video}
+              allowsFullscreenVideo
+              javaScriptEnabled
+              onError={(e) => console.log("WebView error:", e)}
+            />
+          )}
           <Button
             title="Done"
             onPress={() => setShowVideo(false)}
